@@ -1,11 +1,8 @@
+import imp
 from field_elements import Block, Token
 from suits import suits
+from settings import settings
 import random
-
-dimension = (5, 5)
-number_of_suits = len(suits)
-number_of_tokens = 5
-number_of_blocks = 6
 
 
 class FieldMap:
@@ -55,5 +52,5 @@ def d1tod2(x: int, number_of_columns: int):
 
 
 m = FieldMap.create_random_map(
-    dimension, number_of_suits, number_of_tokens, number_of_blocks)
+    settings['dimension'], settings['number_of_suits'], settings['number_of_tokens'], settings['number_of_blocks'])
 print(m)
