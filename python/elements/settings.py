@@ -17,3 +17,18 @@ settings = {
 
 settings['token_columns'] = get_token_columns(
     settings['dimension'][1], settings['number_of_suits'])
+
+
+def get_acceptable_blocks(dimension: tuple, token_columns: list):
+    number_of_rows = dimension[0]
+    number_of_columns = dimension[1]
+    result = []
+    for i in range(number_of_columns):
+        if i not in token_columns:
+            for j in range(number_of_rows):
+                result.append((i, j))
+    return result
+
+
+settings['acceptable_blocks'] = get_acceptable_blocks(
+    settings['dimension'], settings['token_columns'])
