@@ -35,7 +35,7 @@ class FieldMap:
             for _ in range(number_of_tokens):
                 i = random.choice(spaces)
                 elements[i] = Token.create_token(
-                    d1tod2(i, m.number_of_columns), suit)
+                    d1tod2(i, m.number_of_columns), suit['name'])
                 spaces.remove(i)
         m.map = elements
         return m
@@ -50,7 +50,10 @@ class Field:
     def __str__(self):
         return f'Начальное поле {self.map}'
 
+    @classmethod
+    def create_field(cls):
+        return cls(settings)
 
-print(settings)
-f = Field(settings)
+
+# f = Field(settings)
 # print(f)
