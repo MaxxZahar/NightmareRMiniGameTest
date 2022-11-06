@@ -14,6 +14,9 @@ class FieldMap:
     def __str__(self):
         return f'{self.map}'
 
+    def __iter__(self):
+        return iter(self.map)
+
     @classmethod
     def create_empty_map(cls, dimension: tuple):
         return cls(dimension)
