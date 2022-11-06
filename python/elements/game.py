@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
 from field import Field, FieldMap
-# from settings import settings
 from suits import suits
 from ut_funcs import d1tod2, get_suit_index
 
@@ -71,6 +70,8 @@ class Game:
                                           margin_between_squares) + square_size
                     square = (img, img_rect)
                     self.squares_list.append(square)
+                else:
+                    raise ValueError('Something wrong with the map')
 
     def draw_bar(self):
         for square in self.bar:
