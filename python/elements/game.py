@@ -26,16 +26,26 @@ margin_between_squares = 10
 
 
 class TokenSquare:
-    def __init__(self, x, y, img, possible_directions):
+    def __init__(self, x, y, img, possible_directions, i, map):
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.checked = False
         self.possible_directions = possible_directions
+        self.index = i
+        self.map = map
 
-    def update(self):
-        pass
+    def update_positions(self):
+        self.possible_directions = []
+        if self.index - self.map.number_of_columns > 0 and not self.map.map[self.index - self.map.number_of_columns]:
+            self.possible_directions.append('up')
+        if self.index + self.map.number_of_columns < len(self.map) and not self.map.map[self.index + self.map.number_of_columns]:
+            self.possible_directions.append('down')
+        if self.index % self.map.number_of_columns and not self.map.map[self.index - 1]:
+            self.possible_directions.append('left')
+        if self.index % self.map.number_of_columns != self.map.number_of_columns - 1 and not self.map.map[self.index + 1]:
+            self.possible_directions.append('right')
 
 
 class Game:
@@ -84,7 +94,7 @@ class Game:
                         coordinates[1] * (square_size +
                                           margin_between_squares) + square_size
                     possible_directions = []
-                    if i - self.map.number_of_columns > 0 and not self.map.map[i - self.map.number_of_columns]:
+                    if i - self.map.number_of_columns >= 0 and not self.map.map[i - self.map.number_of_columns]:
                         possible_directions.append('up')
                     if i + self.map.number_of_columns < len(self.map) and not self.map.map[i + self.map.number_of_columns]:
                         possible_directions.append('down')
@@ -92,7 +102,8 @@ class Game:
                         possible_directions.append('left')
                     if i % self.map.number_of_columns != self.map.number_of_columns - 1 and not self.map.map[i + 1]:
                         possible_directions.append('right')
-                    square = TokenSquare(x, y, img, possible_directions)
+                    square = TokenSquare(
+                        x, y, img, possible_directions, i, self.map)
                     self.squares_list.append(square)
                 else:
                     raise ValueError('Something wrong with the map')
@@ -132,6 +143,41 @@ while run:
                 elif not square.rect.collidepoint(pos) and square.checked:
                     square.checked = False
             print([square.possible_directions for square in game.squares_list])
+        elif event.type == pygame.KEYUP and [square for square in game.squares_list if square.checked]:
+            checked_square = [
+                square for square in game.squares_list if square.checked][0]
+            if event.key == pygame.K_LEFT and 'left' in checked_square.possible_directions:
+                checked_square.index -= 1
+                checked_square.rect.x -= (square_size + margin_between_squares)
+                game.map.map[checked_square.index] = game.map.map[checked_square.index + 1]
+                game.map.map[checked_square.index + 1] = 0
+                for square in game.squares_list:
+                    square.update_positions()
+            if event.key == pygame.K_RIGHT and 'right' in checked_square.possible_directions:
+                checked_square.index += 1
+                checked_square.rect.x += (square_size + margin_between_squares)
+                game.map.map[checked_square.index] = game.map.map[checked_square.index - 1]
+                game.map.map[checked_square.index - 1] = 0
+                for square in game.squares_list:
+                    square.update_positions()
+            if event.key == pygame.K_UP and 'up' in checked_square.possible_directions:
+                checked_square.index -= game.map.number_of_columns
+                checked_square.rect.y -= (square_size + margin_between_squares)
+                game.map.map[checked_square.index] = game.map.map[checked_square.index +
+                                                                  game.map.number_of_columns]
+                game.map.map[checked_square.index +
+                             game.map.number_of_columns] = 0
+                for square in game.squares_list:
+                    square.update_positions()
+            if event.key == pygame.K_DOWN and 'down' in checked_square.possible_directions:
+                checked_square.index += game.map.number_of_columns
+                checked_square.rect.y += (square_size + margin_between_squares)
+                game.map.map[checked_square.index] = game.map.map[checked_square.index -
+                                                                  game.map.number_of_columns]
+                game.map.map[checked_square.index -
+                             game.map.number_of_columns] = 0
+                for square in game.squares_list:
+                    square.update_positions()
     pygame.display.update()
 
 pygame.quit()
