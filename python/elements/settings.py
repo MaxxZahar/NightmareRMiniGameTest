@@ -2,10 +2,17 @@ from suits import suits
 import random
 
 
-def get_token_columns(number_of_columns: int, number_of_suits: int):
-    lst = list(range(number_of_columns))
-    random.shuffle(lst)
-    return lst[:number_of_suits]
+def get_token_columns(number_of_columns: int, number_of_suits: int, manual=True):
+    if manual:
+        lst = [0, 2, 4]
+        if len(lst) != number_of_suits:
+            raise ValueError('Wrong number of token columns')
+        random.shuffle(lst)
+        return lst
+    else:
+        lst = list(range(number_of_columns))
+        random.shuffle(lst)
+        return lst[:number_of_suits]
 
 
 settings = {
@@ -13,6 +20,7 @@ settings = {
     'number_of_suits': len(suits),
     'number_of_tokens': 5,
     'number_of_blocks': 6,
+    'min_block_spaces': 2,
 }
 
 settings['token_columns'] = get_token_columns(

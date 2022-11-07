@@ -1,3 +1,4 @@
+# Основные элементы на карте - фишки и блоки.
 class FieldElement:
     def __init__(self, x: int, y: int):
         self.x = x

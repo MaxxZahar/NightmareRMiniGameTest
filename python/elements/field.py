@@ -4,6 +4,8 @@ from settings import settings
 from ut_funcs import d1tod2, d2tod1
 import random
 
+# Класс карты
+
 
 class FieldMap:
     def __init__(self, dimension: tuple):
@@ -24,6 +26,7 @@ class FieldMap:
     def create_empty_map(cls, dimension: tuple):
         return cls(dimension)
 
+    # Метод для генерирования случайной карты.
     @classmethod
     def create_random_map(cls, dimension: tuple, number_of_suits: int, number_of_tokens: int, number_of_blocks: int):
         m = cls(dimension)
@@ -31,12 +34,23 @@ class FieldMap:
             raise ValueError('Excessive field content')
         elements = [0 for _ in range(dimension[0] * dimension[1])]
         spaces = list(range(dimension[0] * dimension[1]))
+        # Генерируем блоки
+        block_scheme = {}
         for _ in range(number_of_blocks):
             el = random.choice(settings['acceptable_blocks'])
             i = d2tod1(el, m.number_of_columns)
             elements[i] = Block.create_block(el)
+            if block_scheme.get(el[0]):
+                block_scheme[el[0]] += 1
+            else:
+                block_scheme[el[0]] = 1
             spaces.remove(i)
             settings['acceptable_blocks'].remove(el)
+            # Проверяем, что есть дырки в столбце блоков. Для произвольного расположения этого не достаточно, но для дефолтного вполне.
+            if block_scheme[el[0]] == dimension[0] - settings['min_block_spaces']:
+                settings['acceptable_blocks'] = [
+                    block for block in settings['acceptable_blocks'] if block[0] != el[0]]
+        # Генерируем фишки
         for suit in suits:
             for _ in range(number_of_tokens):
                 i = random.choice(spaces)
@@ -59,7 +73,3 @@ class Field:
     @classmethod
     def create_field(cls):
         return cls(settings)
-
-
-# f = Field(settings)
-# print(f)
