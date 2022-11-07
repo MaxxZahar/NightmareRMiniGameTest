@@ -17,6 +17,9 @@ class FieldMap:
     def __iter__(self):
         return iter(self.map)
 
+    def __len__(self):
+        return len(self.map)
+
     @classmethod
     def create_empty_map(cls, dimension: tuple):
         return cls(dimension)
